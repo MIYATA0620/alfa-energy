@@ -1,0 +1,13 @@
+{
+  "name": "alfamart-energy-checklist",
+  "version": "1.0.0",
+  "description": "Alfamart Energy Savings Checklist System — Local Network App",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["alfamart", "energy", "checklist"],
+  "author": "Alfamart",
+  "license": "ISC"
+}
