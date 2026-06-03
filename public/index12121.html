@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Alfamart Energy Checklist</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#E8001D">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="AlfaEnergy">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <!-- CSS (load order matters) -->
+  <link rel="stylesheet" href="/css/variables.css">
+  <link rel="stylesheet" href="/css/base.css">
+  <link rel="stylesheet" href="/css/login.css">
+  <link rel="stylesheet" href="/css/layout.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/mobile.css">
+  <link rel="stylesheet" href="/css/notifications.css">
+  <link rel="stylesheet" href="/css/compliance.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="login-logo">ALFA<br>MART</div>
+    <div class="login-title">Energy Checklist</div>
+    <div class="login-sub">Enter your 4-digit PIN to continue</div>
+    <div class="pin-display" id="pin-display">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-grid" id="pin-grid"></div>
+    <button class="pin-clear" onclick="pinClear()">⌫ Clear</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div class="app" id="app">
+
+  <!-- Offline bar -->
+  <div class="offline-bar" id="offline-bar2"></div>
+
+  <!-- Top Nav -->
+  <nav class="topnav">
+    <!-- Burger (mobile only) -->
+    <button id="mobile-menu-btn" class="mobile-menu-btn" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+
+    <!-- Brand -->
+    <div class="logo-block">
+      <div class="logo-icon">ALFA<br>MART</div>
+      <div>
+        <div class="logo-name">Alfamart Energy</div>
+        <div class="logo-sub">Checklist System</div>
+      </div>
+    </div>
+
+    <!-- View Switcher -->
+    <div class="view-switcher" id="view-switcher">
+      <button class="view-btn active" onclick="switchView('server')">🖥 Dashboard</button>
+      <button class="view-btn" onclick="switchView('mobile')">📱 Mobile</button>
+    </div>
+
+    <!-- Right section -->
+    <div class="nav-r">
+      <!-- Clock -->
+      <div id="clock"></div>
+
+      <!-- Theme toggle -->
+      <button id="theme-toggle" onclick="toggleTheme()">🌓 <span class="theme-lbl">Theme</span></button>
+
+      <!-- User -->
+      <div class="user-pill" onclick="logout()">
+        <div class="user-avatar" id="user-av"></div>
+        <span id="user-name-lbl"></span>
+        <span style="color:var(--text3);font-size:10px;margin-left:2px">Sign out</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Sidebar overlay (mobile) -->
+  <div id="sidebar-overlay" class="sidebar-overlay" onclick="toggleSidebar(false)"></div>
+
+  <!-- SERVER DASHBOARD VIEW -->
+  <div class="view active" id="view-server" style="display:flex;height:calc(100vh - 54px)">
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+      <div class="sb-search">
+        <input class="sb-search-inp" id="store-search" type="text" placeholder="🔍 Search store…" oninput="filterStores(this.value)">
+      </div>
+
+      <div class="sb-label">Stores</div>
+      <div id="store-list"></div>
+
+      <div class="sb-label" style="margin-top:12px">Actions</div>
+      <button class="sb-action" onclick="notifyAll()">
+        <div class="sb-action-icon" style="background:var(--red-bg)">📢</div>
+        <div style="text-align:left">
+          <div style="font-size:12px;font-weight:600;color:var(--red)">Notify All Stores</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:1px">Send shift reminder</div>
+        </div>
+      </button>
+      <button class="sb-action" onclick="exportReport()">
+        <div class="sb-action-icon" style="background:var(--bg3)">📄</div>
+        <div style="text-align:left">
+          <div style="font-size:12px;font-weight:600">Export Report</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:1px">Download CSV</div>
+        </div>
+      </button>
+      <button class="sb-action" onclick="syncNow()">
+        <div class="sb-action-icon" style="background:var(--blue-bg)">🔄</div>
+        <div style="text-align:left">
+          <div style="font-size:12px;font-weight:600">Sync Now</div>
+          <div style="font-size:10px;color:var(--text3);margin-top:1px">Refresh from server</div>
+        </div>
+      </button>
+    </div>
+
+    <!-- Main panel -->
+    <div class="main-panel">
+
+      <!-- ══ ALL-STORES VIEW ══ -->
+      <div id="view-all-stores">
+
+        <!-- Stats -->
+        <div class="stat-grid">
+          <div class="stat-card">
+            <div class="stat-lbl">Stores Active</div>
+            <div class="stat-val" id="s-stores">6</div>
+            <div class="stat-trend" style="color:var(--green)">All online</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Overall Progress</div>
+            <div class="stat-val" id="s-progress" style="color:var(--green)">0%</div>
+            <div class="stat-trend">across all stores</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Tasks Submitted</div>
+            <div class="stat-val" id="s-tasks" style="color:var(--blue)">0</div>
+            <div class="stat-trend">total submissions</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-lbl">Pending Approval</div>
+            <div class="stat-val" id="s-pending" style="color:var(--amber)">0</div>
+            <div class="stat-trend">need review</div>
+          </div>
+        </div>
+
+        <!-- Alerts -->
+        <div class="mb-4">
+          <div class="sec-title" id="alerts-header" style="display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none;margin-bottom:8px">⚠ Alerts</div>
+          <div id="alerts-box"></div>
+        </div>
+
+        <!-- Store Status Table -->
+        <div class="sec-title">🏪 Store Status</div>
+        <div class="crew-table-wrap mb-4">
+          <table class="crew-table">
+            <thead><tr>
+              <th>Store No.</th>
+              <th>Store</th>
+              <th>Store Status</th>
+              <th>Progress</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr></thead>
+            <tbody id="crew-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Compliance -->
+        <div class="sec-title">📊 Compliance Rate (Today)</div>
+        <div id="compliance-toolbar" style="margin-bottom:8px"></div>
+        <div id="compliance-panel" style="margin-bottom:20px">
+          <div style="padding:16px;text-align:center;color:var(--text3);font-size:12px">Loading…</div>
+        </div>
+
+        <!-- Temperature Logs -->
+        <div class="sec-title">🌡️ Latest Temperature Logs</div>
+        <div class="temp-table-wrap mb-4" id="temp-log-wrap">
+          <div style="padding:20px;text-align:center;color:var(--text3);font-size:12px">No temperature logs yet.</div>
+        </div>
+
+        <!-- Energy Summary -->
+        <div class="sec-title">⚡ Energy Consumption Summary</div>
+        <div id="energy-summary-wrap" style="margin-bottom:20px"></div>
+
+        <!-- Submissions: Pending + Approved side by side -->
+        <div class="submissions-grid">
+          <div class="submissions-col">
+            <div class="sec-title">📥 Pending Submissions <span id="pending-count-badge" class="sub-count-badge"></span></div>
+            <div id="feed-box">
+              <div class="sub-empty">No pending submissions.</div>
+            </div>
+          </div>
+          <div class="submissions-col">
+            <div class="sec-title">✅ Approved History <span id="approved-count-badge" class="sub-count-badge sub-count-green"></span></div>
+            <div id="approved-history-box"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ SINGLE STORE DETAIL ══ -->
+      <div id="view-store-detail" style="display:none">
+        <div id="store-detail-content"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOBILE VIEW -->
+  <div class="view" id="view-mobile">
+    <div class="phone">
+      <div class="phone-notch">
+        <div class="notch">
+          <div class="notch-cam"></div>
+          <div class="notch-bar"></div>
+          <div class="notch-cam"></div>
+        </div>
+      </div>
+      <div class="phone-body">
+
+        <!-- CHECKLIST SCREEN -->
+        <div class="m-screen active" id="m-s-checklist">
+          <div class="m-head">
+            <div class="m-head-top">
+              <div class="m-logo">ALFA</div>
+              <div class="m-store" id="m-store-lbl">Store</div>
+              <div class="m-bell" onclick="showNotif()">🔔<div class="bell-dot" id="bell-dot"></div></div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+              <span class="shift-tag" id="m-shift-tag">🌅 Opening · 7AM</span>
+              <span style="font-size:11px;color:var(--text2)" id="m-done-lbl">0 / 0</span>
+            </div>
+            <div class="m-prog-row">
+              <span style="font-size:11px;color:var(--text3)">0%</span>
+              <div class="m-prog-bar"><div class="m-prog-fill" id="m-prog-fill"></div></div>
+              <span style="font-size:11px;color:var(--text2);font-weight:600" id="m-pct-lbl">0%</span>
+            </div>
+          </div>
+          <div id="grace-banner-slot"></div>
+          <div class="m-list" id="m-checklist"></div>
+        </div>
+
+        <!-- TEMPERATURE SCREEN -->
+        <div class="m-screen" id="m-s-temp">
+          <div class="m-head">
+            <div class="m-head-top">
+              <div class="m-logo">ALFA</div>
+              <div class="m-store" id="m-temp-title">Temperature Log</div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px">
+              <span class="shift-tag" id="m-temp-shift-tag">❄️ Opening (7AM)</span>
+              <span id="m-temp-status-lbl" style="font-size:11px;color:var(--text2)"></span>
+            </div>
+          </div>
+          <div class="m-temp-body" id="m-temp-body"></div>
+          <div style="padding:0 12px 12px;flex-shrink:0" id="m-temp-submit-wrap">
+            <button class="submit-btn" id="m-temp-submit-btn" onclick="submitTemps()">📤 Submit Temperature Log</button>
+          </div>
+        </div>
+
+        <!-- HISTORY SCREEN -->
+        <div class="m-screen" id="m-s-history">
+          <div class="m-head">
+            <div class="m-head-top">
+              <div class="m-logo">ALFA</div>
+              <div class="m-store">My Submissions</div>
+            </div>
+          </div>
+          <div class="m-hist-body" id="m-hist-body"></div>
+        </div>
+      </div>
+
+      <!-- Bottom Nav -->
+      <div class="m-bottom">
+        <button class="m-nav active" id="mn-checklist" onclick="mNav('checklist')">
+          <span class="m-nav-icon">☑️</span>
+          <span>Checklist</span>
+          <div class="m-badge" id="m-task-badge">0</div>
+        </button>
+        <button class="m-nav" id="mn-temp" onclick="mNav('temp')">
+          <span class="m-nav-icon">🌡️</span>
+          <span>Temp Log</span>
+        </button>
+        <button class="m-nav" id="mn-history" onclick="mNav('history')">
+          <span class="m-nav-icon">📋</span>
+          <span>History</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+<!-- POPUP NOTIFICATION OVERLAY -->
+<div class="popup-overlay" id="popup-overlay">
+  <div class="popup-card">
+    <div class="popup-header">
+      <div class="popup-ring">🔔</div>
+      <div class="popup-header-title">Checklist Reminder</div>
+      <div class="popup-header-sub" id="popup-subtitle">📢 From Store Manager</div>
+      <div class="popup-notif-count" id="popup-count"></div>
+    </div>
+    <div class="popup-body">
+      <div class="popup-store-tag">🏪 <span id="popup-store-name">Store</span></div>
+      <div class="popup-msg" id="popup-msg">Please complete your energy checklist and attach photos as proof.</div>
+      <div id="popup-grace" class="popup-grace" style="display:none">
+        <div class="popup-grace-row">
+          <span class="popup-grace-label">Compliance Score</span>
+          <span class="popup-grace-pct" id="popup-grace-pct">100%</span>
+        </div>
+        <div class="popup-grace-tiers" id="popup-grace-tiers">
+          <div class="popup-grace-tier lit" data-min="10"></div>
+          <div class="popup-grace-tier lit" data-min="20"></div>
+          <div class="popup-grace-tier lit" data-min="30"></div>
+          <div class="popup-grace-tier lit" data-min="40"></div>
+          <div class="popup-grace-tier lit" data-min="60"></div>
+          <div class="popup-grace-tier lit" data-min="90"></div>
+        </div>
+        <div class="popup-grace-timer" id="popup-grace-timer">⏱ Complete checklist now</div>
+      </div>
+      <div class="popup-time" id="popup-time"></div>
+      <div class="popup-actions">
+        <button class="popup-btn-dismiss" onclick="dismissPopup()">Dismiss</button>
+        <button class="popup-btn-go" onclick="goToChecklist()">📋 Go to Checklist</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- GRACE PERIOD BAR (mobile checklist) -->
+<div class="grace-bar-wrap" id="grace-bar-wrap">
+  <div class="grace-header">
+    <span class="grace-title" id="grace-bar-title">⏱ Grace Period Active</span>
+    <span class="grace-score" id="grace-bar-score">100%</span>
+  </div>
+  <div class="grace-tiers" id="grace-bar-tiers">
+    <div class="grace-tier" data-min="10" data-pct="100"></div>
+    <div class="grace-tier" data-min="20" data-pct="90"></div>
+    <div class="grace-tier" data-min="30" data-pct="80"></div>
+    <div class="grace-tier" data-min="40" data-pct="70"></div>
+    <div class="grace-tier" data-min="60" data-pct="50"></div>
+    <div class="grace-tier" data-min="90" data-pct="0"></div>
+  </div>
+  <div class="grace-countdown">
+    <span class="grace-label" id="grace-bar-label">Complete checklist to record 100% compliance</span>
+    <span class="grace-elapsed" id="grace-bar-elapsed">+0 min elapsed</span>
+  </div>
+  <div class="grace-countdown" style="border-top:none;padding-top:0">
+    <span style="font-size:11px;color:var(--text3)" id="grace-bar-next"></span>
+  </div>
+</div>
+
+</div><!-- /.app -->
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-x" onclick="closeLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="proof photo">
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- JavaScript (load order matters) -->
+<script src="/js/config.js"></script>
+<script src="/js/api.js"></script>
+<script src="/js/auth.js"></script>
+<script src="/js/views.js"></script>
+<script src="/js/dashboard.js"></script>
+<script src="/js/notifications.js"></script>
+<script src="/js/mobile.js"></script>
+
+</body>
+</html>

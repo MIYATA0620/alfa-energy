@@ -1,0 +1,77 @@
+/* ============================================================
+   responsive.css — Alfamart Energy Checklist
+   ============================================================ */
+
+/* ── TABLET ── */
+@media (max-width: 1024px) {
+  .stat-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+
+  /* Nav */
+  .topnav {
+    padding: 0 10px;
+    gap: 8px;
+    height: 52px;
+  }
+
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+
+  /* Hide clock and some nav items on mobile */
+  #clock { display: none !important; }
+
+  .logo-sub { display: none; }
+
+  #theme-toggle .theme-lbl { display: none; }
+
+  /* Stat grid: 2 cols on mobile */
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+
+  /* ── SIDEBAR DRAWER ── */
+  .sidebar {
+    position: fixed !important;
+    left: calc(-1 * var(--sidebar-w) - 10px) !important;
+    top: 52px !important;
+    height: calc(100vh - 52px) !important;
+    width: var(--sidebar-w) !important;
+    z-index: 160;
+    border-right: 1px solid var(--border2);
+    box-shadow: 4px 0 24px rgba(0,0,0,0.5);
+    transition: left 0.28s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  .sidebar.open {
+    left: 0 !important;
+  }
+
+  /* Main panel full width */
+  .main-panel { padding: 14px 12px; }
+
+  /* Table scrollable */
+  .crew-table-wrap { overflow-x: auto; }
+  .crew-table th,
+  .crew-table td { padding: 9px 10px; font-size: 12px; }
+
+  /* Feed items */
+  .feed-item { padding: 10px 12px; }
+
+  /* Store detail */
+  .store-detail-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+
+  /* Actions */
+  #feed-box,
+  #approved-history-box { overflow: hidden; }
+}
+
+/* ── SMALL MOBILE ── */
+@media (max-width: 480px) {
+  .topnav { padding: 0 8px; gap: 6px; }
+  .view-switcher { display: none !important; }
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .stat-val { font-size: 18px; }
+  .main-panel { padding: 10px; }
+}

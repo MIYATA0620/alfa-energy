@@ -1,0 +1,132 @@
+/* ============================================================
+   LOGIN SCREEN — PIN entry, card, dots
+   login.css
+   ============================================================ */
+
+/* ── SCREEN OVERLAY ── */
+#login-screen {
+  position: fixed;
+  inset: 0;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  flex-direction: column;
+  gap: 0;
+  animation: fadeIn 0.3s ease;
+}
+
+/* ── CARD ── */
+.login-card {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: var(--rl);
+  padding: 32px;
+  width: 340px;
+  box-shadow: var(--shadow-lg);
+  transition: box-shadow var(--transition);
+}
+.login-card:focus-within { box-shadow: var(--shadow-lg), 0 0 0 1px var(--red-b); }
+
+/* ── LOGO ── */
+.login-logo {
+  width: 56px;
+  height: 56px;
+  background: var(--red);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 0.01em;
+  margin: 0 auto 20px;
+  text-align: center;
+  line-height: 1.2;
+  box-shadow: var(--shadow-red);
+  transition: transform var(--transition);
+}
+.login-logo:hover { transform: scale(1.05); }
+
+/* ── TEXT ── */
+.login-title {
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 6px;
+  letter-spacing: -0.02em;
+}
+.login-sub {
+  font-size: 13px;
+  color: var(--text2);
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* ── PIN DOTS ── */
+.pin-display {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.pin-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  transition: var(--transition);
+}
+.pin-dot.filled {
+  background: var(--red);
+  border-color: var(--red);
+  box-shadow: 0 0 8px var(--red-b);
+}
+
+/* ── PIN KEYPAD ── */
+.pin-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.pin-btn {
+  padding: 14px;
+  font-size: 16px;
+  font-weight: 500;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--rs);
+  color: var(--text);
+  transition: var(--transition);
+  user-select: none;
+}
+.pin-btn:hover  { background: var(--bg4); border-color: var(--border2); }
+.pin-btn:active { background: var(--bg4); transform: scale(0.95); }
+
+/* ── CLEAR BUTTON ── */
+.pin-clear {
+  width: 100%;
+  padding: 11px;
+  font-size: 15px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--rs);
+  color: var(--text2);
+  transition: var(--transition);
+}
+.pin-clear:hover { background: var(--bg3); border-color: var(--border2); }
+
+/* ── ERROR ── */
+.login-err {
+  font-size: 13px;
+  color: var(--red);
+  text-align: center;
+  height: 18px;
+  margin-top: 8px;
+  font-weight: 500;
+  animation: fadeIn 0.2s ease;
+}

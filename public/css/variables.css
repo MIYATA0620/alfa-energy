@@ -1,0 +1,89 @@
+/* ============================================================
+   ALFAMART ENERGY CHECKLIST — CSS VARIABLES & THEME
+   variables.css
+   ============================================================ */
+
+:root {
+  /* Brand */
+  --red: #E8001D;
+  --red-d: #B0001A;
+  --red-bg: rgba(232,0,29,0.10);
+  --red-b: rgba(232,0,29,0.25);
+
+  /* Dark theme backgrounds */
+  --bg:  #0D0D0F;
+  --bg2: #141416;
+  --bg3: #1C1C1F;
+  --bg4: #242428;
+
+  /* Borders */
+  --border:  rgba(255,255,255,0.07);
+  --border2: rgba(255,255,255,0.13);
+
+  /* Text */
+  --text:  #F0F0F2;
+  --text2: #B8B8C8;
+  --text3: #7A7A8A;
+
+  /* Status */
+  --green:    #1DB37A;
+  --green-bg: rgba(29,179,122,0.10);
+  --green-b:  rgba(29,179,122,0.25);
+  --amber:    #F5A623;
+  --amber-bg: rgba(245,166,35,0.10);
+  --amber-b:  rgba(245,166,35,0.25);
+  --blue:     #3B9EFF;
+  --blue-bg:  rgba(59,158,255,0.10);
+  --blue-b:   rgba(59,158,255,0.25);
+
+  /* Layout */
+  --r:  12px;
+  --rs:  8px;
+  --rl: 16px;
+
+  /* Typography */
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+  --mono: 'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+
+  /* Shadows */
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.5);
+  --shadow-red: 0 4px 16px rgba(232,0,29,0.25);
+
+  /* Transitions */
+  --transition: all 0.15s ease;
+  --transition-slow: all 0.25s ease;
+
+  /* Sidebar width */
+  --sidebar-w: 240px;
+}
+
+/* ── LIGHT THEME OVERRIDES ── */
+body.light-theme {
+  --bg:  #F4F4F6;
+  --bg2: #FFFFFF;
+  --bg3: #EAEAEC;
+  --bg4: #DCDCDF;
+  --border:  rgba(0,0,0,0.08);
+  --border2: rgba(0,0,0,0.15);
+  --text:  #111114;
+  --text2: #44444E;
+  --text3: #72727F;
+  --red:    #CC0019;
+  --red-bg: rgba(200,0,25,0.08);
+  --red-b:  rgba(200,0,25,0.20);
+  --green:    #0E9E62;
+  --green-bg: rgba(14,158,98,0.10);
+  --green-b:  rgba(14,158,98,0.20);
+  --amber:    #C87D0A;
+  --amber-bg: rgba(200,125,10,0.10);
+  --amber-b:  rgba(200,125,10,0.20);
+  --blue:    #1A7DD8;
+  --blue-bg: rgba(26,125,216,0.10);
+  --blue-b:  rgba(26,125,216,0.20);
+  --shadow-sm:  0 1px 3px rgba(0,0,0,0.10);
+  --shadow-md:  0 4px 12px rgba(0,0,0,0.12);
+  --shadow-lg:  0 8px 24px rgba(0,0,0,0.15);
+  --shadow-red: 0 4px 16px rgba(200,0,25,0.18);
+}

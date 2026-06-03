@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Electric Meter Patch — Alfamart Energy</title>
+<style>
+  :root{--bg:#0f1117;--bg2:#181c24;--bg3:#1e2230;--border:#2a2f3d;--text:#e8eaf0;--text2:#8b9ab3;--text3:#4a5568;
+  --red:#e8001d;--blue:#3B9EFF;--green:#1DB37A;--amber:#F5A623;--mono:'JetBrains Mono',monospace;--font:'Inter',sans-serif}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--font);background:var(--bg);color:var(--text);line-height:1.6;padding:32px}
+  h1{font-size:24px;font-weight:800;margin-bottom:4px}
+  h2{font-size:16px;font-weight:700;margin:28px 0 10px;padding:8px 12px;background:var(--bg2);border-left:3px solid var(--blue);border-radius:0 6px 6px 0}
+  h3{font-size:13px;font-weight:700;color:var(--text2);margin:16px 0 8px;text-transform:uppercase;letter-spacing:.07em}
+  .subtitle{font-size:14px;color:var(--text2);margin-bottom:28px}
+  .card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:16px}
+  .fix-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;margin-right:6px;margin-bottom:6px}
+  .fix-green{background:rgba(29,179,122,.15);color:var(--green);border:1px solid rgba(29,179,122,.3)}
+  .fix-blue{background:rgba(59,158,255,.15);color:var(--blue);border:1px solid rgba(59,158,255,.3)}
+  .fix-amber{background:rgba(245,166,35,.15);color:var(--amber);border:1px solid rgba(245,166,35,.3)}
+  .fix-red{background:rgba(232,0,29,.15);color:var(--red);border:1px solid rgba(232,0,29,.3)}
+  code{font-family:var(--mono);font-size:12px;background:var(--bg3);padding:2px 6px;border-radius:4px;color:var(--blue)}
+  pre{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:16px;font-family:var(--mono);font-size:12px;line-height:1.7;overflow-x:auto;margin:10px 0}
+  pre .comment{color:var(--text3)}
+  pre .key{color:var(--amber)}
+  pre .val{color:var(--green)}
+  pre .tag{color:var(--red)}
+  .step{display:flex;gap:12px;margin-bottom:12px;align-items:flex-start}
+  .step-num{width:26px;height:26px;min-width:26px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;margin-top:2px}
+  .step-body{flex:1}
+  .step-title{font-size:14px;font-weight:600;margin-bottom:4px}
+  .step-desc{font-size:13px;color:var(--text2)}
+  hr{border:none;border-top:1px solid var(--border);margin:24px 0}
+  .feature-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:20px}
+  .feature-card{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:14px}
+  .feature-icon{font-size:22px;margin-bottom:8px}
+  .feature-title{font-size:13px;font-weight:700;margin-bottom:4px}
+  .feature-desc{font-size:12px;color:var(--text2);line-height:1.5}
+  .warn{background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);border-radius:8px;padding:12px;font-size:12px;color:var(--amber);margin:12px 0}
+  .tip{background:rgba(59,158,255,.08);border:1px solid rgba(59,158,255,.25);border-radius:8px;padding:12px;font-size:12px;color:var(--blue);margin:12px 0}
+</style>
+</head>
+<body>
+
+<h1>⚡ Electric Meter Module — Integration Guide</h1>
+<div class="subtitle">Alfamart Energy Checklist · Patch for energy NaN bug + new electric meter feature</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>🐛 What's Fixed</h2>
+
+<div class="card">
+  <div>
+    <span class="fix-badge fix-green">✓ Fixed</span>
+    <span class="fix-badge fix-red">Bug</span>
+    <strong>Energy consumption showing NaN</strong>
+  </div>
+  <p style="font-size:13px;color:var(--text2);margin-top:10px">
+    <strong>Root cause:</strong> <code>dashboard.js</code> defines <code>APPLIANCES</code> with <code>a.hrs</code> property.
+    <code>mobile.js</code> (loaded after) redefines <code>APPLIANCES</code> with <code>a.hours</code>.
+    Since JS uses the last declaration, <code>calcKwhDay(a)</code> in <code>dashboard.js</code> reads <code>a.hrs</code>
+    which is <code>undefined</code> on the <code>mobile.js</code> objects → <code>NaN</code>.
+  </p>
+  <p style="font-size:13px;color:var(--text2);margin-top:8px">
+    <strong>Fix:</strong> <code>electric-meter.js</code> patches <code>window.calcKwhDay</code> to accept both
+    <code>a.hrs</code> and <code>a.hours</code> transparently. No existing files need editing.
+  </p>
+  <pre><span class="comment">// Before (dashboard.js — breaks when mobile.js APPLIANCES wins):</span>
+function calcKwhDay(a) { return a.kw * a.hrs; }
+
+<span class="comment">// After (patched in electric-meter.js):</span>
+window.calcKwhDay = function(a) {
+  var hrs = (a.hrs !== undefined) ? a.hrs : (a.hours || 0);
+  return (a.kw || 0) * hrs;
+};</pre>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>✨ New Features</h2>
+
+<div class="feature-grid">
+  <div class="feature-card">
+    <div class="feature-icon">📷</div>
+    <div class="feature-title">AI Meter Photo Reading</div>
+    <div class="feature-desc">Take a photo of the electric meter → Anthropic Vision API automatically extracts the kWh number with confidence rating.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">✏️</div>
+    <div class="feature-title">Manual kWh Input</div>
+    <div class="feature-desc">Enter readings manually per store per day. Shows difference vs previous reading. Overwrites same-day entry.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">📊</div>
+    <div class="feature-title">Day / Week / Month View</div>
+    <div class="feature-desc">Bar chart of readings filtered by Today / Last 7 Days / Last 30 Days. Total kWh, cost, avg/day, and peak day stats.</div>
+  </div>
+  <div class="feature-card">
+    <div class="feature-icon">🏪</div>
+    <div class="feature-title">Per-Store Dashboard</div>
+    <div class="feature-desc">Server dashboard gets a new "Electric Meter Readings" section showing all stores in a sortable table with cost calculations.</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>🚀 Integration Steps</h2>
+
+<div class="card">
+
+  <div class="step">
+    <div class="step-num">1</div>
+    <div class="step-body">
+      <div class="step-title">Copy the file to your JS folder</div>
+      <div class="step-desc">Place <code>electric-meter.js</code> in the same folder as <code>mobile.js</code> — typically <code>/js/electric-meter.js</code> or <code>/public/js/electric-meter.js</code>.</div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">2</div>
+    <div class="step-body">
+      <div class="step-title">Add the script tag to index.html</div>
+      <div class="step-desc">Add <strong>after</strong> <code>mobile.js</code> — this is critical for the NaN patch to work correctly.</div>
+      <pre><span class="comment">&lt;!-- index.html — bottom of &lt;body&gt; --&gt;</span>
+&lt;<span class="tag">script</span> <span class="key">src</span>=<span class="val">"/js/config.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+&lt;<span class="tag">script</span> <span class="key">src</span>=<span class="val">"/js/api.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+&lt;<span class="tag">script</span> <span class="key">src</span>=<span class="val">"/js/auth.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+&lt;<span class="tag">script</span> <span class="key">src</span>=<span class="val">"/js/views.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+&lt;<span class="tag">script</span> <span class="key">src</span>=<span class="val">"/js/dashboard.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+&lt;<span class="tag">script</span> <span class="key">src</span>=<span class="val">"/js/notifications.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+&lt;<span class="tag">script</span> <span class="key">src</span>=<span class="val">"/js/mobile.js"</span>&gt;&lt;/<span class="tag">script</span>&gt;
+<span style="color:var(--green);font-weight:700">&lt;script src="/js/electric-meter.js"&gt;&lt;/script&gt;  &lt;!-- ← ADD THIS --&gt;</span>
+</pre>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">3</div>
+    <div class="step-body">
+      <div class="step-title">Verify the Anthropic API proxy is working</div>
+      <div class="step-desc">
+        The AI photo feature calls <code>https://api.anthropic.com/v1/messages</code> with an image payload.
+        This is the same endpoint used elsewhere in the app. If your proxy strips the <code>anthropic-version</code>
+        header, make sure it's still passing through — the module relies on your existing proxy setup.
+        If the API call fails, the user sees a friendly warning and can enter kWh manually.
+      </div>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-num">4</div>
+    <div class="step-body">
+      <div class="step-title">(Optional) Persist readings to your API instead of localStorage</div>
+      <div class="step-desc">
+        By default readings are saved to <code>localStorage</code> under key <code>emr_readings</code>.
+        To sync across devices, replace <code>emrLoad()</code> and <code>emrSave()</code> with API calls
+        to your existing <code>/api/meter-readings</code> endpoint. The data shape is:
+      </div>
+      <pre><span class="comment">// emr_readings structure:</span>
+{
+  <span class="key">"storeId"</span>: [
+    { <span class="key">"date"</span>: <span class="val">"2026-06-03"</span>, <span class="key">"kwh"</span>: <span class="val">287.5</span>, <span class="key">"source"</span>: <span class="val">"photo"</span>, <span class="key">"note"</span>: <span class="val">""</span> },
+    { <span class="key">"date"</span>: <span class="val">"2026-06-02"</span>, <span class="key">"kwh"</span>: <span class="val">273.0</span>, <span class="key">"source"</span>: <span class="val">"manual"</span>, <span class="key">"note"</span>: <span class="val">"Meter reset"</span> }
+  ]
+}</pre>
+    </div>
+  </div>
+
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>📱 Mobile UI — What Users Will See</h2>
+
+<div class="card">
+  <h3>New ⚡ Meter tab in bottom navigation</h3>
+  <p style="font-size:13px;color:var(--text2);margin-bottom:16px">Added alongside Checklist, Temp Log, and History.</p>
+
+  <h3>Input Screen (default)</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;color:var(--text2)">
+    <div>✅ Date picker (defaults to today)</div>
+    <div>✅ Camera photo upload</div>
+    <div>✅ AI reads kWh automatically</div>
+    <div>✅ Manual kWh input field</div>
+    <div>✅ Shows diff vs previous reading</div>
+    <div>✅ Optional note/remarks field</div>
+    <div>✅ Overwrites same-date entry</div>
+    <div>✅ Warning if date already has data</div>
+  </div>
+
+  <h3 style="margin-top:16px">History Screen (tap 📋 icon)</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:13px;color:var(--text2)">
+    <div>✅ Day / Week / Month tabs</div>
+    <div>✅ Bar chart of readings</div>
+    <div>✅ Total kWh + est. cost cards</div>
+    <div>✅ Peak day and avg/day stats</div>
+    <div>✅ Record log with delete button</div>
+    <div>✅ View meter photo in lightbox</div>
+    <div>✅ Store switcher (admin only)</div>
+    <div>✅ Meralco rate applied to cost</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<h2>🖥 Server Dashboard — New Section</h2>
+
+<div class="card">
+  <p style="font-size:13px;color:var(--text2);margin-bottom:12px">
+    A new <strong>"🔌 Electric Meter Readings (Actual kWh)"</strong> section appears automatically above
+    the existing Energy Consumption Summary in the server dashboard.
+  </p>
+  <div style="font-size:13px;color:var(--text2)">
+    <div>✅ Day / Last 7 Days / Last 30 Days filter tabs</div>
+    <div>✅ Grand total kWh and cost across all stores</div>
+    <div>✅ Per-store table: name, store no., reading count, kWh, cost, avg/day, peak day</div>
+    <div>✅ Visual bar showing relative consumption per store</div>
+    <div>✅ Shows empty state with instructions when no data yet</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════ -->
+<div class="warn">
+  ⚠ <strong>Photo storage:</strong> Meter photos are stored as base64 in localStorage.
+  Large photos can exceed the ~5MB localStorage limit quickly.
+  For production, consider uploading photos to your server and storing only the URL.
+  The AI OCR runs before the photo is stored — if you want to discard the image after reading, call <code>emrClearPhoto()</code> after the AI fills the kWh field.
+</div>
+
+<div class="tip">
+  💡 <strong>KWH_DATA in mobile.js:</strong> Your existing <code>KWH_DATA</code> variable (historical meter readings Jan–May 2026) is separate from this module's real-time storage.
+  You can seed <code>emrLoad()</code> with that historical data on first load to backfill the charts — or leave them as separate systems (historical vs. actual going forward).
+</div>
+
+<hr>
+<div style="font-size:12px;color:var(--text3);text-align:center">
+  electric-meter.js · Alfamart Energy Checklist · June 2026
+</div>
+
+</body>
+</html>

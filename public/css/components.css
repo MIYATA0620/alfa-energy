@@ -1,0 +1,53 @@
+/* ============================================================
+   components.css — Alfamart Energy Checklist
+   ============================================================ */
+
+/* ── SIDEBAR SEARCH ── */
+.sb-search{
+  padding:8px;border-bottom:1px solid var(--border);margin-bottom:6px;
+}
+.sb-search-inp{
+  width:100%;background:var(--bg3);border:1px solid var(--border2);
+  border-radius:var(--rs);padding:6px 10px;font-size:11px;
+  color:var(--text);outline:none;transition:border-color 0.15s;
+}
+.sb-search-inp:focus{border-color:var(--red)}
+.sb-search-inp::placeholder{color:var(--text3)}
+
+/* ── STORE DETAIL PANEL ── */
+.store-detail-header{
+  background:var(--bg2);border:1px solid var(--border);
+  border-radius:var(--r);padding:16px 18px;margin-bottom:14px;
+  display:flex;align-items:center;gap:14px;
+}
+.store-detail-av{
+  width:48px;height:48px;border-radius:12px;background:var(--red);
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.store-detail-name{font-size:16px;font-weight:700;letter-spacing:-0.01em;line-height:1.2}
+.store-detail-meta{font-size:15px;color:var(--text2);margin-top:4px}
+
+/* Mini chart bars */
+.chart-bar-wrap{display:flex;align-items:flex-end;gap:2px;height:60px;margin-top:10px}
+.chart-bar{
+  flex:1;background:var(--blue-bg);border-radius:3px 3px 0 0;
+  min-height:3px;transition:height 0.4s ease;position:relative;
+  cursor:pointer;
+}
+.chart-bar:hover{background:var(--blue)}
+.chart-bar.today{background:var(--red)}
+.chart-lbl{font-size:8px;color:var(--text3);text-align:center;margin-top:3px;white-space:nowrap;overflow:hidden}
+.chart-x-labels{display:flex;gap:2px}
+.chart-x-lbl{flex:1;font-size:8px;color:var(--text3);text-align:center;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+
+/* KWH stat card (compact) */
+.kwh-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.kwh-stat{background:var(--bg2);border:1px solid var(--border);border-radius:var(--rs);padding:10px 12px}
+.kwh-stat-lbl{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px}
+.kwh-stat-val{font-size:16px;font-weight:700;letter-spacing:-0.02em;line-height:1.05}
+.kwh-stat-sub{font-size:10px;color:var(--text2);margin-top:2px}
+
+/* Progress ring */
+.prog-ring{width:36px;height:36px;flex-shrink:0}
+

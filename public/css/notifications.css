@@ -1,0 +1,241 @@
+/* ============================================================
+   notifications.css — Alfamart Energy Checklist
+   Window-style notification popup
+   ============================================================ */
+
+/* ── OVERLAY (backdrop) ── */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 9999;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.popup-overlay.show { display: flex; }
+
+/* ── WINDOW CARD ── */
+.popup-window {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  width: 100%;
+  max-width: 420px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.04);
+  animation: windowPop 0.22s cubic-bezier(0.34,1.4,0.64,1);
+}
+@keyframes windowPop {
+  from { opacity: 0; transform: scale(0.93) translateY(10px); }
+  to   { opacity: 1; transform: none; }
+}
+
+/* ── TITLE BAR ── */
+.popup-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px 11px;
+  background: var(--bg3);
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
+.popup-titlebar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+.popup-titlebar-icon {
+  width: 28px;
+  height: 28px;
+  background: var(--red-bg);
+  border: 1px solid var(--red-b);
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.popup-titlebar-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.popup-notif-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  height: 18px;
+  background: var(--red);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 9px;
+  padding: 0 5px;
+  flex-shrink: 0;
+}
+.popup-notif-count:empty { display: none; }
+.popup-close-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid var(--border2);
+  background: var(--bg4);
+  color: var(--text2);
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+  font-family: var(--font);
+}
+.popup-close-btn:hover { background: var(--red-bg); color: var(--red); border-color: var(--red-b); }
+
+/* ── WINDOW BODY ── */
+.popup-window-body {
+  padding: 16px;
+}
+
+/* Source row (sender + time) */
+.popup-source-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.popup-source-icon { font-size: 14px; }
+.popup-source-lbl  {
+  flex: 1;
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 600;
+}
+.popup-time-lbl {
+  font-size: 11px;
+  color: var(--text3);
+  font-family: var(--mono);
+  white-space: nowrap;
+}
+
+/* Store badge */
+.popup-store-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--red-bg);
+  border: 1px solid var(--red-b);
+  border-radius: 20px;
+  padding: 4px 11px;
+  font-size: 12px;
+  color: var(--red);
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+/* Message box */
+.popup-msg {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text);
+  background: var(--bg3);
+  border-radius: var(--rs);
+  padding: 11px 13px;
+  margin-bottom: 14px;
+  border-left: 3px solid var(--red);
+}
+
+/* ── GRACE PERIOD PANEL ── */
+.popup-grace {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--rs);
+  padding: 12px 13px;
+  margin-bottom: 14px;
+}
+.popup-grace-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.popup-grace-lbl {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.popup-grace-pct {
+  font-size: 18px;
+  font-weight: 800;
+  font-family: var(--mono);
+  color: var(--green);
+  line-height: 1;
+}
+.popup-grace-tiers {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+.popup-grace-tier {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border2);
+  transition: background 0.3s;
+}
+.popup-grace-tier.lit { background: var(--green); }
+.popup-grace-timer {
+  font-size: 11px;
+  color: var(--text3);
+  text-align: center;
+}
+
+/* ── ACTIONS ── */
+.popup-actions {
+  display: flex;
+  gap: 8px;
+}
+.popup-btn-dismiss {
+  flex: 1;
+  padding: 11px 14px;
+  border: 1px solid var(--border2);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text2);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s;
+  font-family: var(--font);
+}
+.popup-btn-dismiss:hover { background: var(--bg3); }
+.popup-btn-go {
+  flex: 2;
+  padding: 11px 14px;
+  border: none;
+  border-radius: 9px;
+  background: var(--red);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s, opacity 0.15s;
+  font-family: var(--font);
+}
+.popup-btn-go:hover  { background: var(--red-d); }
+.popup-btn-go:active { opacity: 0.85; }
