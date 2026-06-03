@@ -21,7 +21,7 @@ const PUBLIC_PATH = path.join(__dirname, 'public');
 // Secret path prefix — the app is ONLY accessible at /atp/...
 // Anyone guessing the plain IP just gets a 404.
 // Change SITE_KEY to any word you want (no spaces, lowercase).
-const SITE_KEY    = 'atp';           // → http://alfacheck:3000/atp/
+const SITE_KEY    = '';           // → http://alfacheck:3000/atp/
 const APP_TOKEN   = 'alfamart-2026'; // sent as X-App-Token header by the client
                                      // (set matching value in your index.html apiFetch)
 
