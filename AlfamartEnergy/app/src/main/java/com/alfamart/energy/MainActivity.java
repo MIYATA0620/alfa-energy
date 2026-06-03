@@ -37,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
 
     // ← Replace with your actual server IP and port
     private static final String APP_URL = "https://alfa-energy.onrender.com/";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
