@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <!-- Allow plain HTTP to local network IPs (192.168.x.x, 10.x.x.x, etc.) -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">192.168.1.32</domain>
+        <domain includeSubdomains="false">192.168.1.1</domain>
+        <domain includeSubdomains="false">alfacheck</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+    <!-- Block cleartext everywhere else (internet stays HTTPS-only) -->
+    <base-config cleartextTrafficPermitted="false" />
+</network-security-config>
