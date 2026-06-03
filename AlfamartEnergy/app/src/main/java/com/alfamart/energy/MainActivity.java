@@ -36,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     private Uri cameraImageUri;
 
     // ← Replace with your actual server IP and port
-    private static final String APP_URL = "http://192.168.1.32:3000/atp/";
+    private static final String APP_URL = "https://alfa-energy.onrender.com/";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
